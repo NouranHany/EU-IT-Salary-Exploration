@@ -2,6 +2,7 @@ from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 import pandas as pd
 
+
 #TODO: Combine 2 datasets 
 
 def data_pre(df):
@@ -99,6 +100,3 @@ def clean_pos_col(df):
             df.at[i,'Position'] = 'system administrator'
     df  = df[df['Position'] !='nan']
     return df 
-        
-    
-
