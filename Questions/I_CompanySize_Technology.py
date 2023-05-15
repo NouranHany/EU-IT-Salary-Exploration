@@ -1,5 +1,7 @@
 from fuzzywuzzy import process
 from fuzzywuzzy import fuzz
+import pandas as pd
+import matplotlib.pyplot as plt
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -93,3 +95,63 @@ def standardize(df, col, titles):
     df[col] = df[col].apply(find_best_match)
 
     return df
+
+
+
+import matplotlib.pyplot as plt
+import pandas as pd
+
+def plot_histogram_grid(df, column1, column2, n_cols=2, figsize=(10, 5), color='#44c2b1'):
+    # Calculate the frequencies of each unique value in column1 for each unique value in column2
+    frequencies = df.groupby(column2)[column1].value_counts()
+
+    # Calculate the number of rows for the grid of subplots
+    n_rows = (len(frequencies.index.levels[0]) + n_cols - 1) // n_cols
+
+    # Create a figure and axes
+    fig, axes = plt.subplots(n_rows, n_cols, figsize=figsize, sharex=False, sharey=False)
+
+    # Set the background color to black
+    fig.patch.set_facecolor('black')
+
+    plt.subplots_adjust(hspace=2.5)
+
+    # Plot each histogram in a separate subplot
+    for i, (value2, group) in enumerate(frequencies.groupby(level=0)):
+        row = i // n_cols
+        col = i % n_cols
+        ax = axes[row][col] if n_rows > 1 else axes[col]
+
+        # Set the facecolor and label colors to black and white
+        ax.set_facecolor('black')
+        ax.xaxis.label.set_color('white')
+        ax.yaxis.label.set_color('white')
+        ax.tick_params(axis='x', colors='white')
+        ax.tick_params(axis='y', colors='white')
+
+        # Plot the histogram with the specified bar color and white edges
+        ax.bar(group.index.get_level_values(1), group.values, color=color, edgecolor='white', linewidth=1.5)
+
+        # Add value labels to the top of each bar
+        for j, count in enumerate(group.values):
+            x = j
+            y = count
+            percentage = f'{y / sum(group.values) * 100:.1f}%'
+            label = f'{y}\n'
+            ax.text(x, y, label, ha='center', va='bottom', color='white', fontsize=10)
+
+        # Set the title of the subplot to the value of column2
+        ax.set_title(value2, color='white')
+
+        # Rotate the x-axis labels by 90 degrees
+        plt.setp(ax.get_xticklabels(), rotation=90)
+
+    # Remove any unused subplots
+    for j in range(i + 1, n_rows * n_cols):
+        row = j // n_cols
+        col = j % n_cols
+        ax = axes[row][col] if n_rows > 1 else axes[col]
+        fig.delaxes(ax)
+
+    # Show the plot
+    plt.show()
