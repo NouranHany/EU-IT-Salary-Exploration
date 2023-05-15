@@ -60,7 +60,7 @@ def segment_age(df,
 
 def plot_pie_chart(df, column_name):
     
-    plt.figure(figsize=(15, 8))
+    plt.figure(figsize=(15, 5))
     value_counts = df[column_name].value_counts()
     labels = value_counts.index.tolist()
     sizes = value_counts.values.tolist()
@@ -73,19 +73,19 @@ def plot_pie_chart(df, column_name):
     plt.show()
 
 def plot_pie_charts(df, analysis_column, division_column):
-    
-    plt.figure(figsize=(15, 8))
-    analysis_categories = df[analysis_column].unique()
+
+    plt.figure(figsize=(20, 15))
+    analysis_categories = df[analysis_column].dropna().unique()
     for indx, category in enumerate(analysis_categories):
-        plt.subplot(2, len(analysis_categories)//2, indx)
-        category_mask = df[analysis_column == category]
+        plt.subplot(2, len(analysis_categories)//2, indx+1)
+        category_mask = df[analysis_column] == category
         value_counts = df[category_mask][division_column].value_counts()
         labels = value_counts.index.tolist()
         sizes = value_counts.values.tolist()
 
         # Plotting the pie chart
-        plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
+        plt.pie(sizes, labels=labels, autopct='%1.1f', startangle=-40, radius=5)
+        plt.yticks(rotation=90)
         plt.axis('equal') 
-        plt.title(f'Frequency of {division_column} for {category}')
-        plt.legend()
+        plt.title(f'Frequency of {analysis_column} for {category}')
     plt.show()
