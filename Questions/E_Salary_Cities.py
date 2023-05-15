@@ -10,7 +10,7 @@ from fuzzywuzzy import process
 
 def read(dataset='all'):
     '''
-    dataset : '2020', '2019', '2018' , 'all'
+    dataset : '2020', '2019', '2018' ,'standardized','all'
     '''
     if dataset=='all':
         df_2020 = pd.read_csv('../Dataset/2020.csv')
@@ -146,7 +146,7 @@ def clean_positions(df):
     return df_cpy
 
 
-def standardize(df, col, job_titles):
+def standardize(df, col, titles):
     """
     Standardize the position column in a dataframe using fuzzy string matching.
 
@@ -160,7 +160,7 @@ def standardize(df, col, job_titles):
 
     # Define a function to find the best match for a given position
     def find_best_match(column):
-        best_match = process.extractOne(column, job_titles)
+        best_match = process.extractOne(column, titles)
         return best_match[0]
 
     # Apply the find_best_match function to the position column
@@ -220,7 +220,7 @@ def correlation_ratio(df):
  
 
 
-def plot_single_histogram(df,column,figsize=(5,5)):
+def plot_single_histogram(df,column,title=None,figsize=(5,5)):
     # Calculate the frequencies of each unique value in the column
     frequencies = df[column].value_counts()
 
@@ -229,6 +229,8 @@ def plot_single_histogram(df,column,figsize=(5,5)):
 
     # Create a figure and axis
     fig, ax = plt.subplots()
+
+   
 
     # Set the background color to black
     fig.patch.set_facecolor('black')
@@ -243,6 +245,7 @@ def plot_single_histogram(df,column,figsize=(5,5)):
     # Plot the sorted frequencies as a bar plot with the specified bar color and white edges
     ax.bar(sorted_frequencies.index, sorted_frequencies.values, color='#44c2b1', edgecolor='white', linewidth=1.5)
 
+
     # Add value labels to the top of each bar
     for i, value in enumerate(sorted_frequencies.values):
         x = i
@@ -254,7 +257,9 @@ def plot_single_histogram(df,column,figsize=(5,5)):
 
     # Rotate the x-axis labels by 90 degrees
     plt.xticks(rotation=90)
-
+    
+    if title:
+        ax.set_title(title, color='white')
     # Show the plot
     plt.show()
 
@@ -305,8 +310,8 @@ def plot_heatmap(df,x,y,value,title,x_label,y_label,aggfunc='mean'):
     plt.ylabel(y_label)  # Add labels to the y-axis
     plt.show()
 
-def plot_grid_of_bar_chart(df,col='Position', X='City', Y='Salary'):
-    g = sns.FacetGrid(df, col=col, col_wrap=3, sharex=False,height=4)
+def plot_grid_of_bar_chart(df,col='Position', X='City', Y='Salary',col_wrap=3):
+    g = sns.FacetGrid(df, col=col, col_wrap=col_wrap, sharex=False,height=4)
 
     # Map the sns.barplot function to each subplot to plot the bar charts
     g.map(sns.barplot, X, Y, color='#44c2b1')
