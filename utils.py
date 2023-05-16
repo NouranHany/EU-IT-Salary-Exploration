@@ -38,6 +38,7 @@ def data_pre(df):
     df2019 = df2019[["Timestamp", "Age", "Gender", "City", "Position", "Experience_Years", "Seniority",
     "Main_Tech", "Salary", "Salary_Bonus", "Last_Year_Salary", "Last_Year_Salary_Bonus", "Vacations",
     "Contract_Duration", "Main_Language_Work", "Company_Size", "Company_Type"]]
+
     df = pd.concat([df2020, df2019])
     df = df.apply(lambda x: x.astype(str).str.lower())
     return df
