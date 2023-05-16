@@ -1,4 +1,7 @@
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
 import pandas as pd
+
 
 #TODO: Combine 2 datasets 
 
@@ -53,3 +56,48 @@ def count_nan_values(data,column_name):
 #     df = df.apply(lambda x: x.astype(str).str.lower())
 
 #     return 
+
+def clean_pos_col(df):
+# create a list of unique position names
+    positions = df['Position'].unique()
+    
+    # create a dictionary to store the standardized position names
+    standardized_positions = {}
+    
+    # use fuzzy string matching to identify similar position names
+    for position in positions:
+        # check if the position name is already standardized
+        if position in standardized_positions:
+            continue
+        
+        # find the best match for the position name among the remaining unique positions
+        matches = process.extract(position, positions, scorer=fuzz.token_sort_ratio, limit=None)
+        best_match, score = max(matches, key=lambda x: x[1])
+        
+        # if the best match has a high similarity score, add it as a synonym of the standardized name
+        if score >= 80:
+            standardized_positions[position] = best_match
+            for synonym in matches:
+                if synonym[1] >= 80:
+                    standardized_positions[synonym[0]] = best_match
+        else:
+            standardized_positions[position] = position
+    
+    # map the standardized position names to the original survey data
+    df['Position'] = df['Position'].map(standardized_positions)
+    for i, row in df.iterrows():
+        print(row['Position'])
+        if row['Position'] in ['qa engineer' , 'qa lead' , 'qa manager' , 'working student(qa)']:
+            df.at[i,'Position'] = 'qa'
+        if row['Position'] in ['ну или software engineer']:
+            df.at[i,'Position'] = 'software engineer'
+        if row['Position'] in ['software developer in test']:
+            df.at[i,'Position'] = 'software tester'
+        if row['Position'] in ['lead software developer']:
+            df.at[i,'Position'] = 'software developer'
+        if row['Position'] in ['senior data engineer' , 'data science manager' , 'data science manager' , 'analyst']:
+            df.at[i,'Position'] = 'data engineer'
+        if row['Position'] in ['systemadministrator']:
+            df.at[i,'Position'] = 'system administrator'
+    df  = df[df['Position'] !='nan']
+    return df 
