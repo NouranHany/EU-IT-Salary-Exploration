@@ -23,9 +23,15 @@ def read(dataset='all'):
 
 
 def rename_columns(df_2020,df_2019,df_2018):
+<<<<<<< HEAD
+    df_2020.rename(columns = { "Position ":'Position',
+                               'Yearly brutto salary (without bonus and stocks) in EUR':'Salary',
+                               "Total years of experience": 'Years of experience'}
+=======
     df_2020.rename(columns = {"Position ":'Position',
                                'Yearly brutto salary (without bonus and stocks) in EUR':'Salary',
                                'Total years of experience':'Years of experience'}
+>>>>>>> f5f8f67f5f36253a6945be0477bf51777cfe78e4
                               , inplace = True)
 
     df_2019.rename(columns = {"Position (without seniority)":'Position',
@@ -33,7 +39,11 @@ def rename_columns(df_2020,df_2019,df_2018):
                               , inplace = True)
 
     df_2018.rename(columns = {'Current Salary':'Salary',
+<<<<<<< HEAD
+                              'Your level': 'Seniority level'} 
+=======
                               'Your level':'Seniority level'}
+>>>>>>> f5f8f67f5f36253a6945be0477bf51777cfe78e4
                             , inplace = True)
     
 
