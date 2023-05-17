@@ -1,3 +1,4 @@
+from statsmodels.stats.proportion import proportions_ztest
 from fuzzywuzzy import process
 from fuzzywuzzy import fuzz
 import pandas as pd
@@ -98,8 +99,6 @@ def standardize(df, col, titles):
 
 
 
-import matplotlib.pyplot as plt
-import pandas as pd
 
 def plot_histogram_grid(df, column1, column2, n_cols=2, figsize=(10, 5), color='#44c2b1'):
     # Calculate the frequencies of each unique value in column1 for each unique value in column2
@@ -155,3 +154,47 @@ def plot_histogram_grid(df, column1, column2, n_cols=2, figsize=(10, 5), color='
 
     # Show the plot
     plt.show()
+
+
+def z_test_proportion_companies(max_technology,df_cleaned,COMPANY_SIZE,BIG,MEDIUM,TECHNOLOGY):
+    '''
+    max_technology: the technology with the highest count in medium sized/ big sized companies
+                    it is the technology we want to compare with other technologies
+    '''
+
+    df_big_companies= df_cleaned[df_cleaned[COMPANY_SIZE]==BIG]
+
+    # Get the technology with the highest count in medium sized companies
+    sample_size = len(df_big_companies)
+
+    max_tech_count = len(df_big_companies[df_big_companies[TECHNOLOGY] == max_technology])
+
+    # key: Technology 
+    # val: True for reject Null Hypothesis 
+    #      False for fail to reject Null Hypothesis
+    my_dic={}
+    another_dic={}
+    for technology in df_big_companies[TECHNOLOGY].unique():
+        if technology== max_technology:continue
+        tech_count= len(df_big_companies[df_big_companies[TECHNOLOGY] == technology])
+        if tech_count<10:continue
+
+        # Perform a z-test of two proportions
+        count = [max_tech_count, tech_count]
+        nobs = [sample_size, sample_size]
+        stat, pval = proportions_ztest(count, nobs)
+
+        if pval/2 < 0.05 and stat>0:
+            my_dic[technology]=True
+            another_dic[technology]=pval/2
+        else:
+            my_dic[technology]=False
+            another_dic[technology]=pval/2
+
+        
+    hypothesis_result=pd.DataFrame(my_dic,index=[0])
+    pvals=pd.DataFrame(another_dic,index=[0])
+
+    return hypothesis_result,pvals
+
+
