@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from fuzzywuzzy import fuzz
 from matplotlib.colors import LinearSegmentedColormap
 from unidecode import unidecode
 from fuzzywuzzy import process
@@ -24,14 +25,16 @@ def read(dataset='all'):
 
 def rename_columns(df_2020,df_2019,df_2018):
     df_2020.rename(columns = {"Position ":'Position',
-                               'Yearly brutto salary (without bonus and stocks) in EUR':'Salary'}
+                               'Yearly brutto salary (without bonus and stocks) in EUR':'Salary',
+                               'Seniority level':'Seniority level'}
                               , inplace = True)
     
     df_2019.rename(columns = {"Position (without seniority)":'Position',
-                               'Yearly brutto salary (without bonus and stocks)':'Salary'}
+                               'Yearly brutto salary (without bonus and stocks)':'Salary',
+                               'Seniority level':'Seniority level'}
                               , inplace = True)
-
-    df_2018.rename(columns = {'Current Salary':'Salary'}
+    df_2018.rename(columns = {'Current Salary':'Salary',
+                              'Your level':'Seniority level'}
                             , inplace = True)
     
 
@@ -80,7 +83,7 @@ def clean_cities(df,filter=None):
     '''
     df_cpy=df.copy()
 
-  
+
     # split the cities by comma
     df_cpy['City']=df_cpy['City']\
     .str.split(',')\
@@ -119,12 +122,12 @@ def clean_cities(df,filter=None):
 
 
 def clean_positions(df):
-
+    
     POSITION='Position'
-    job_titles = ['Software Engineer', 'Backend Developer', 'Frontend Developer',
-                  'Fullstack Developer','Mobile Developer', 'DevOps','Designer (UI/UX)',
-                   'Data Scientist','ML Engineer','QA Engineer','Product Manager',
-                   'Data Engineer', 'Researcher','Security Engineer','Other']
+    job_titles = ['software engineer', 'backend developer', 'frontend developer','software architect',
+                  'fullstack developer','mobile developer', 'devops','designer (ui/ux)',
+                   'data scientist','ml engineer','qa engineer','qa','ios developer','software developer','product manager',
+                   'data engineer', 'researcher','security engineer','software tester']
     
     def replace_cloud_with_devops(x):
         '''
@@ -132,21 +135,83 @@ def clean_positions(df):
         This function replaces cloud with devops to reduce false matching.
         '''
         if 'cloud' in x:
-            return 'DevOps'
-        else:
-            return x
+            return 'devops'
+        elif 'javascript' in x:
+            return 'backend developer'
+        elif 'python' in x:
+            return 'backend developer'
+        elif 'js' in x:
+            return 'backend developer'
+        elif 'java' in x:
+            return 'backend developer'
+        elif 'java' in x:
+            return 'backend developer'
+        elif 'php' in x:
+            return 'backend developer'
+        elif 'scala' in x:
+            return 'backend developer'
+        elif 'ruby' in x:
+            return 'backend developer'
+        elif '.net' in x:
+            return 'backend developer'
+        elif 'db' in x:
+            return 'backend developer'
+        elif 'android' in x:
+            return 'mobile developer'
+        elif 'business analyst' in x:
+            return 'data engineer'
+        elif 'data analyst' in x:
+            return 'data engineer'
+        elif x == 'sre':
+            return 'devops'
+        return x
         
     df_cpy=df.copy()
 
     df_cpy[POSITION] = df_cpy[POSITION].str.lower().apply(replace_cloud_with_devops)
-    
-    
-    df_cpy=standardize(df_cpy,POSITION,job_titles)
-    
+    df_cpy[POSITION] = df_cpy[POSITION].str.replace('machine learning','ml')
+    df_cpy=standardize_pos(df_cpy,POSITION,job_titles)
+    for i, row in df_cpy.iterrows():
+        if row['Position'] in ['data scientist']:
+            df_cpy.at[i,'Position'] = 'data engineer'
+        elif row['Position'] in ['qa']:
+            df_cpy.at[i,'Position'] = 'qa engineer'
+        elif row[POSITION] in job_titles:
+            continue
+        else:
+            df_cpy.at[i,'Position'] = 'Other'
+    df_cpy[POSITION] = df_cpy[POSITION].str.replace('software tester','qa engineer')
+    df_cpy[POSITION] = df_cpy[POSITION].str.replace('ios developer','mobile developer')
+    df_cpy[POSITION] = df_cpy[POSITION].str.replace('software architect','software engineer')
+    df_cpy[POSITION] = df_cpy[POSITION].str.replace('software developer','software engineer')
+    df_cpy[POSITION] = df_cpy[POSITION].str.replace('ml engineer','ai engineer')
+    df_cpy[POSITION] = df_cpy[POSITION].str.replace('data engineer','ai engineer')
     return df_cpy
 
 
-def standardize(df, col, titles):
+# def standardize(df, col, titles):
+#     """
+#     Standardize the position column in a dataframe using fuzzy string matching.
+
+#     :df: The input dataframe
+#     :col: The name of the position column
+#     :job_titles: A list of standardized job titles
+#     :return: A new dataframe with standardized position column
+#     """
+#     # Create a copy of the input dataframe
+#     df = df.copy()
+
+#     # Define a function to find the best match for a given position
+#     def find_best_match(column):
+#         best_match = process.extractOne(column, titles)
+#         return best_match[0]
+
+#     # Apply the find_best_match function to the position column
+#     df[col] = df[col].apply(find_best_match)
+
+#     return df
+
+def standardize_pos(df, col, titles):
     """
     Standardize the position column in a dataframe using fuzzy string matching.
 
@@ -160,14 +225,30 @@ def standardize(df, col, titles):
 
     # Define a function to find the best match for a given position
     def find_best_match(column):
-        best_match = process.extractOne(column, titles)
-        return best_match[0]
+        best_match = process.extractBests(column, titles)
+        thresh_ratio=70
+        thresh_confidence =80
+        match=None
+        ratios={}
+        for i in range(len(best_match)):
+                item=best_match[i][0] 
+                confidence=best_match[i][1]
+                ratio=fuzz.ratio(column,item)
+                ratios[item]=ratio
+                if ratio>thresh_ratio and confidence>thresh_confidence:
+                     match=item
+                     thresh_ratio=ratio
+                     thresh_confidence=confidence
+        print(column,' ',best_match)
+        print('ratios',ratios)
+        print('--------------------------------------')
+        if match ==None: return column
+        return match
 
     # Apply the find_best_match function to the position column
     df[col] = df[col].apply(find_best_match)
 
     return df
-
 
 def remove_outliers(df,column):
     # Calculate the IQR for the salary column
