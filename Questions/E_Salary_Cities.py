@@ -24,14 +24,16 @@ def read(dataset='all'):
 
 def rename_columns(df_2020,df_2019,df_2018):
     df_2020.rename(columns = {"Position ":'Position',
-                               'Yearly brutto salary (without bonus and stocks) in EUR':'Salary'}
+                               'Yearly brutto salary (without bonus and stocks) in EUR':'Salary',
+                               'Total years of experience':'Years of experience'}
                               , inplace = True)
-    
+
     df_2019.rename(columns = {"Position (without seniority)":'Position',
                                'Yearly brutto salary (without bonus and stocks)':'Salary'}
                               , inplace = True)
 
-    df_2018.rename(columns = {'Current Salary':'Salary'}
+    df_2018.rename(columns = {'Current Salary':'Salary',
+                              'Your level':'Seniority level'}
                             , inplace = True)
     
 
