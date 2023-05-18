@@ -27,7 +27,8 @@ def rename_columns(df_2020,df_2019,df_2018):
     df_2020.rename(columns = {"Position ":'Position',
                                'Yearly brutto salary (without bonus and stocks) in EUR':'Salary',
                                "Total years of experience": 'Years of experience',
-                               'Seniority level':'Seniority level'}
+                               'Seniority level':'Seniority level'
+}
                               , inplace = True)
 
     df_2019.rename(columns = {"Position (without seniority)":'Position',
@@ -407,3 +408,24 @@ def plot_grid_of_bar_chart(df,col='Position', X='City', Y='Salary',col_wrap=3):
 
     # Show the plot
     plt.show()
+
+# cleaning 
+'''
+1- principal,lead,head can be mapped to senior 
+2- remove senior levels < 5
+'''
+def clean_senior_col(df,filter = 5):
+    df['Seniority level'] =df['Seniority level'].str.lower()
+    meaninigless_values = ['nan','no idea, there are no ranges in the firm','no level','no level ']
+    df = df[~df['Seniority level'].isin(meaninigless_values)]
+    for i, row in df.iterrows():
+            if row['Seniority level'] in ['principal','c-level']:
+                df.at[i,'Seniority level'] = 'senior'
+            if row['Seniority level'] in ['lead','director','cto','vp','key','manager','work center manager','C-level executive manager']:
+                df.at[i,'Seniority level'] = 'head'
+            if row['Seniority level'] in ['intern','working student','entry level','student']:
+                df.at[i,'Seniority level'] = 'junior'
+    seniority_counts = df['Seniority level'].value_counts()
+    seniority_counts = seniority_counts[seniority_counts >= filter]
+    df = df[df['Seniority level'].isin(seniority_counts.index)]
+    return df
