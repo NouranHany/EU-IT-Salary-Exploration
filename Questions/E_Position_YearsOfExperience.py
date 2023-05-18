@@ -98,7 +98,7 @@ def clean_position(df,POSITION='Position'):
 '''
 def clean_senior_col(df,filter = 5):
     df['Seniority level'] =df['Seniority level'].str.lower()
-    meaninigless_values = ['nan','no idea, there are no ranges in the firm','no level','no level ']
+    meaninigless_values = ['nan','no idea, there are no ranges in the firm ','no level','no level ', 'self employed']
     df = df[~df['Seniority level'].isin(meaninigless_values)]
     for i, row in df.iterrows():
             if row['Seniority level'] in ['principal','c-level','manager','work center manager','c-level executive manager']:
@@ -113,8 +113,7 @@ def clean_senior_col(df,filter = 5):
     return df
 
 def clean_years(df):
-    df['Years of experience'] = df['Years of experience'].astype('object')
-    df['Years of experience']=df['Years of experience'].str.lower()
+    df['Years of experience']=df['Years of experience'].astype(str).str.lower()
     df['Years of experience']=df['Years of experience']\
     .replace('1,5','1.5')\
     .replace('1 (as qa engineer) / 11 in total','11')\
@@ -122,6 +121,6 @@ def clean_years(df):
     .replace('15, thereof 8 as cto','15')\
     .replace('6 (not as a data scientist, but as a lab scientist)','6')\
     .replace('less than year','0.5')\
-    .replace('383','5')
+    .replace('383','5').astype(float)
 
     return df
