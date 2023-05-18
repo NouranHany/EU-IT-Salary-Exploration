@@ -24,11 +24,9 @@ def read(dataset='all'):
 
 
 def rename_columns(df_2020,df_2019,df_2018):
-    df_2020.rename(columns = {"Position ":'Position',
+    df_2020.rename(columns = { "Position ":'Position',
                                'Yearly brutto salary (without bonus and stocks) in EUR':'Salary',
-                               "Total years of experience": 'Years of experience',
-                               'Seniority level':'Seniority level'
-}
+                               "Total years of experience": 'Years of experience'}
                               , inplace = True)
 
     df_2019.rename(columns = {"Position (without seniority)":'Position',
@@ -242,9 +240,6 @@ def standardize_pos(df, col, titles):
                      match=item
                      thresh_ratio=ratio
                      thresh_confidence=confidence
-        print(column,' ',best_match)
-        print('ratios',ratios)
-        print('--------------------------------------')
         if match ==None: return column
         return match
 
