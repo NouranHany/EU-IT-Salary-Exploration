@@ -229,9 +229,7 @@ def plot_single_histogram(df,column,title=None,figsize=(5,5)):
     sorted_frequencies = frequencies.sort_values(ascending=False)
 
     # Create a figure and axis
-    fig, ax = plt.subplots()
-
-   
+    fig, ax = plt.subplots(figsize=figsize)
 
     # Set the background color to black
     fig.patch.set_facecolor('black')
@@ -253,7 +251,7 @@ def plot_single_histogram(df,column,title=None,figsize=(5,5)):
         y = value
         percentage = f'{y / sum(sorted_frequencies.values) * 100:.1f}%'
         # label = f'{value}\n{percentage}'
-        label = f'{value}'
+        label = f'{percentage}'
         ax.text(x, y, label, ha='center', va='bottom', color='white',fontsize=10)
 
     # Rotate the x-axis labels by 90 degrees

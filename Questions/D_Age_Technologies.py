@@ -58,9 +58,9 @@ def segment_age(df,
     df[segment_col_name] = pd.cut(df['Age'], bins=age_ranges, labels=age_segments)
     return df
 
-def plot_pie_chart(df, column_name):
-    
+def plot_pie_chart(df, column_name, font_size=8):
     plt.figure(figsize=(15, 5))
+    plt.rcParams['font.size'] = font_size
     value_counts = df[column_name].value_counts()
     labels = value_counts.index.tolist()
     sizes = value_counts.values.tolist()
@@ -72,9 +72,10 @@ def plot_pie_chart(df, column_name):
     plt.legend()
     plt.show()
 
-def plot_pie_charts(df, analysis_column, division_column):
+def plot_pie_charts(df, analysis_column, division_column, font_size=8):
 
     plt.figure(figsize=(20, 15))
+    plt.rcParams['font.size'] = font_size
     analysis_categories = df[analysis_column].dropna().unique()
     for indx, category in enumerate(analysis_categories):
         plt.subplot(2, len(analysis_categories)//2, indx+1)
