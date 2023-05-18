@@ -8,7 +8,7 @@ from fuzzywuzzy import process
 
 
 def clean_position(df,POSITION='Position'):
-    df[POSITION]=df[POSITION].str.strip().str.lower()
+    df[POSITION]=df[POSITION].str.lower().strip()
     df[POSITION]=df[POSITION]\
     .str.replace('devops manager','DevOps')\
     .str.replace('cloud engineer','DevOps')\

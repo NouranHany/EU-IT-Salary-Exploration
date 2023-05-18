@@ -46,6 +46,7 @@ def data_pre(df):
     df = df.apply(lambda x: x.astype(str).str.lower())
     return df
 
+
 # check if the column has nan value 
 def count_nan_values(data,column_name):
     count = data[column_name].isna().sum()

@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "MLTable": "yaml",
+        "unordered_set": "cpp"
+    }
+}
