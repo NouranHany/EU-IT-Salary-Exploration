@@ -240,9 +240,6 @@ def standardize_pos(df, col, titles):
                      match=item
                      thresh_ratio=ratio
                      thresh_confidence=confidence
-        print(column,' ',best_match)
-        print('ratios',ratios)
-        print('--------------------------------------')
         if match ==None: return column
         return match
 
