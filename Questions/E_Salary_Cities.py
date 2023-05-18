@@ -388,7 +388,7 @@ def plot_heatmap(df,x,y,value,title,x_label,y_label,aggfunc='mean'):
     plt.show()
 
 def plot_grid_of_bar_chart(df,col='Position', X='City', Y='Salary',col_wrap=3):
-    g = sns.FacetGrid(df, col=col, col_wrap=col_wrap, sharex=False,height=4)
+    g = sns.FacetGrid(df, col=col, col_wrap=col_wrap, sharex=False,height=4, sharey=False)
 
     # Map the sns.barplot function to each subplot to plot the bar charts
     g.map(sns.barplot, X, Y, color='#44c2b1')
