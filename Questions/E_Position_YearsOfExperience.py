@@ -8,7 +8,7 @@ from fuzzywuzzy import process
 
 
 def clean_position(df,POSITION='Position'):
-    df[POSITION]=df[POSITION].str.strip().str.lower()
+    df[POSITION]=df[POSITION].str.lower().strip()
     df[POSITION]=df[POSITION]\
     .str.replace('devops manager','DevOps')\
     .str.replace('cloud engineer','DevOps')\
@@ -113,6 +113,7 @@ def clean_senior_col(df,filter = 5):
     return df
 
 def clean_years(df):
+    df['Years of experience'] = df['Years of experience'].astype('object')
     df['Years of experience']=df['Years of experience'].str.lower()
     df['Years of experience']=df['Years of experience']\
     .replace('1,5','1.5')\
