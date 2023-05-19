@@ -2,9 +2,6 @@ from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 import pandas as pd
 
-
-#TODO: Combine 2 datasets 
-
 def data_pre(df):
     #read 2 datasets 
     df2020 = pd.read_csv('IT Salary Survey EU  2020.csv')
