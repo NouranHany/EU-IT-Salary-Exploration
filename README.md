@@ -2,7 +2,7 @@
 The aim of our project is to explore IT salaries in Europe and provide valuable insights and analysis to two key target audiences: employers who are establishing or already have an IT company, and individuals searching for jobs in the IT sector. Understanding and analyzing IT salaries in Europe is crucial for both employers and job seekers. Employers gain valuable insights into salary benchmarks, enabling them to attract and retain top talent through competitive compensation packages. Job seekers, on the other hand, benefit from access to crucial salary data, empowering them to negotiate fair salaries and make well-informed career decisions.
 
 ## Additional Resources 📚🔍
-- **Story-telling Presentation**: For a visually engaging overview of our project and its findings, please check out our [presentation](https://www.canva.com/design/DAFjO_ghpQQ/tneO6Q2C7y2knc_7ECw9VQ/view?utm_content=DAFjO_ghpQQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink#9).
+- **Story-telling Presentation**: For a visually engaging overview of our project and its findings, please check out our [presentation](https://www.canva.com/design/DAFjO_ghpQQ/tneO6Q2C7y2knc_7ECw9VQ/view?utm_content=DAFjO_ghpQQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink#1).
 
 - **Project Document**: For detailed information on the cleaning and analysis processes, refer to our comprehensive [project document](./Report.pdf).
 
